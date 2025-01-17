@@ -2,36 +2,52 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/sensor.h>
+#include "ble_comm.h"
+
+#define LOG_MODULE_NAME app
+LOG_MODULE_REGISTER(LOG_MODULE_NAME);
+
 
 static const struct device *get_ds18b20_device(void);
 
 int main(void)
 {
-    const struct device *dev = get_ds18b20_device();
-	int res;
+    int res;
+    int err;
 
-	if (dev == NULL) {
+    const struct device *sensor_dev = get_ds18b20_device();
+	err = ble_init();
+    
+
+	if (sensor_dev == NULL) {
 		return 0;
 	}
-    int count = 0;
-	while (true) {
-		struct sensor_value temp;
-	
-		res = sensor_sample_fetch(dev);
-		if (res != 0) {
-			printk("sample_fetch() failed: %d\n", res);
-			return res;
-		}
-
-		res = sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &temp);
-		if (res != 0) {
-			printk("channel_get() failed: %d\n", res);
-			return res;
-		}
-
-		printk("Temp: %d.%06d\n", temp.val1, temp.val2);
-		k_sleep(K_MSEC(2000));
+    if (err) {
+        LOG_ERR("BLE init error %d", err);
+		return 0;
 	}
+
+    LOG_INF("BLE Running...");
+
+
+	// while (true) {
+	// 	struct sensor_value temp;
+	
+	// 	res = sensor_sample_fetch(sensor_dev);
+	// 	if (res != 0) {
+	// 		printk("sample_fetch() failed: %d\n", res);
+	// 		return res;
+	// 	}
+
+	// 	res = sensor_channel_get(sensor_dev, SENSOR_CHAN_AMBIENT_TEMP, &temp);
+	// 	if (res != 0) {
+	// 		printk("channel_get() failed: %d\n", res);
+	// 		return res;
+	// 	}
+
+	// 	printk("Temp: %d.%06d\n", temp.val1, temp.val2);
+	// 	k_sleep(K_MSEC(2000));
+	// }
     return 0;
 }
 
