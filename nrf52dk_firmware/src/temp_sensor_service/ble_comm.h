@@ -12,4 +12,4 @@
 #define BT_UUID_BLE_SERVICE BT_UUID_DECLARE_128(BT_UUID_BLE_SERV_VAL) 
 
 
-int ble_init(void);
+int ble_init(struct bt_conn_cb *bt_cb);

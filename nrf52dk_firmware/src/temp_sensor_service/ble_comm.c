@@ -27,11 +27,18 @@ void bt_ready(int err)
     k_sem_give(&bt_init_ok);
 }
 
-int ble_init(void)
+int ble_init(struct bt_conn_cb *bt_cb)
 {
     int err;
     LOG_INF("Initializing BLE service XXXXXXXXXXXXXXX");
-    
+ 
+    if(bt_cb == NULL){
+        LOG_ERR("BT CB NULL");
+        return -NRFX_ERROR_NULL;
+    }
+
+    bt_conn_cb_register(bt_cb);
+
     err = bt_enable(bt_ready);
 
     if(err){
